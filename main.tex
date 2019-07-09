@@ -125,12 +125,12 @@ While documenting (100 pages of examples), I ensured that a suite of ``high-leve
 \includegraphics[width=\linewidth]{awkward-1-0-layers.pdf}
 
 \column{0.5\linewidth}
-Put all CPU implementations behind an \mintinline{c++}{extern "C"} interface (stateless).
+Put all CPU implementations behind a stateless \mintinline{c++}{extern "C"} interface.
 
 \begin{itemize}
 \item C++ classes (e.g. {\tt JaggedArray}) provide structure and ownership rules.
-\item Numba (e.g {\tt JaggedArrayModel}) extensions associate Python classes in \mintinline{python}{@numba.jit} functions with the C implementations.
-\item Structure classes mirrored between C++ and Python.
+\item Numba (e.g. {\tt JaggedArrayModel}) extensions associate Python classes in \mintinline{python}{@numba.jit} functions with the same implementations.
+\item Structure classes mirrored between C++ and Python by pybind11.
 \item Structure classes hidden inside {\tt Array}.
 \end{itemize}
 
@@ -138,6 +138,38 @@ Maybe later write \mintinline{c++}{extern "C"} functions for GPU as well.
 \end{columns}
 \end{frame}
 
+\begin{frame}[fragile]{Solution to \#2a: separation between high-level and low-level}
+\large
+\vspace{0.5 cm}
+
+Single {\tt Array} class with a high-level type; narrow access to underlying structure.
+
+\small
+\vspace{0.2 cm}
+\mintinline{python}{>>> myarray}
+
+\vspace{0.1 cm}
+{\tt <Array [[1.1, 2.2, 3.3], [], [4.4, 5.5]] at 0x7fce7170bcf8>}
+
+\vspace{0.2 cm}
+\mintinline{python}{>>> print(awkward.arraytype(array))   # datashape.readthedocs.io}
+
+\vspace{0.1 cm}
+{\tt 3 * var * float64}
+
+\vspace{0.2 cm}
+\mintinline{python}{>>> array.struct}
+
+\vspace{0.1 cm}
+{\tt JaggedArray([3, 99, 0], [5, 99, 3], [4.4, 5.5, 1.1, 2.2, 3.3])}
+
+\large
+\vspace{0.3 cm}
+The user only finds out that it is a {\tt JaggedArray}, and not a lazy {\tt JaggedArray}, by digging into the structure classes provided by pybind11.
+
+\vspace{0.1 cm}
+This also hides the \mintinline{python}{starts=[3, 99, 0]} and \mintinline{python}{stops=[5, 99, 3]}.
+\end{frame}
 
 
 \end{document}
