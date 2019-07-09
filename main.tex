@@ -73,4 +73,71 @@ Awkward-array is the end of a long chain of ideas about columnar analysis:
 \end{enumerate}
 \end{frame}
 
+\begin{frame}{Up to now: one specification, many implementations}
+\large
+\vspace{0.5 cm}
+
+Four of my ``ongoing projects'' are different implementations of awkward, all to adhere to the {\tt specification.adoc} (which is now out of date).
+
+\includegraphics[width=\linewidth]{projects.pdf}
+\end{frame}
+
+\begin{frame}{Just finished a homogenization/documentation campaign}
+\vspace{0.25 cm}
+\begin{columns}
+\column{0.35\linewidth}
+\includegraphics[width=\linewidth]{awkward-documentation.png}
+
+\column{0.55\linewidth}
+``Homogenization'' because a common user complaint is that methods defined on one class (e.g. {\tt JaggedArray}) don't work on another class (e.g. {\tt MaskedArray} of {\tt JaggedArray}).
+
+\vspace{0.5 cm}
+While documenting (100 pages of examples), I ensured that a suite of ``high-level'' methods does something meaningful on every array class.
+\end{columns}
+\end{frame}
+
+\begin{frame}{Problems}
+\large
+\vspace{0.5 cm}
+\begin{enumerate}\setlength{\itemsep}{0.2 cm}
+\item Writing the same method on 14 classes $\times$ 4 implementations is a problem for developer FTEs now and maintainance later.
+
+\textcolor{gray}{(Remember, I haven't touched awkward-numba since February!)}
+
+\item Users need a better separation between high-level and low-level.
+
+\begin{itemize}\normalsize\setlength{\itemsep}{0.2 cm}
+\item Structural classes, such as {\tt ChunkedArray} of {\tt VirtualArrays} of {\tt X} to make array {\tt X} lazy-loading, should be hidden.
+
+\item Named methods, like \mintinline{python}{x.cross(y)} meaning ``cross-join,'' compete for the same namespace with column names and domain-specific methods, like \mintinline{python}{x.cross(y)} meaning ``3-D cross product.''
+\end{itemize}
+
+\item Too many features are opt-in. Numba integration will fail and Pandas integration will have a subtle performance bug if the user doesn't \mintinline{python}{import awkward.numba} and \mintinline{python}{import awkward.pandas} first.
+
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{Solution to \#1: implement at most twice}
+\vspace{0.1 cm}
+
+\begin{columns}
+\column{0.55\linewidth}
+\includegraphics[width=\linewidth]{awkward-1-0-layers.pdf}
+
+\column{0.5\linewidth}
+Put all CPU implementations behind an \mintinline{c++}{extern "C"} interface (stateless).
+
+\begin{itemize}
+\item C++ classes (e.g. {\tt JaggedArray}) provide structure and ownership rules.
+\item Numba (e.g {\tt JaggedArrayModel}) extensions associate Python classes in \mintinline{python}{@numba.jit} functions with the C implementations.
+\item Structure classes mirrored between C++ and Python.
+\item Structure classes hidden inside {\tt Array}.
+\end{itemize}
+
+Maybe later write \mintinline{c++}{extern "C"} functions for GPU as well.
+\end{columns}
+\end{frame}
+
+
+
 \end{document}
