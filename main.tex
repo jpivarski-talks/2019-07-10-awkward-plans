@@ -11,7 +11,7 @@
   \setbeamertemplate{footline}[frame number]  % or "page number"
   \setbeamercolor{frametitle}{fg=white}
   \setbeamercolor{footline}{fg=black}
-} 
+}
 
 \usepackage[english]{babel}
 \usepackage[utf8x]{inputenc}
@@ -56,9 +56,21 @@
 
 % START START START START START START START START START START START START START
 
-\begin{frame}{First slide}
-\vspace{0.5 cm}
-HERE
+\begin{frame}{Context}
+\large
+\vspace{0.35 cm}
+Awkward-array is the end of a long chain of ideas about columnar analysis:
+
+\vspace{0.25 cm}
+\begin{enumerate}
+  \item \textcolor{darkblue}{Femtocode} was originally envisioned as a combined language, columnar processor, and distributed system: a full-package service for physics.
+  \item To be more realistic, I separated the language and columnar processing from the distributed processing, leaving the latter to others.
+  \item \textcolor{darkblue}{Shredtypes} $\to$ \textcolor{darkblue}{Quiver} (for Arrow) $\to$ \textcolor{darkblue}{OAMap} were iterations on expressing an abstract type system with an internal columnar representation.
+  \item \textcolor{darkblue}{Uproot 2} had a ``minimal columnar data type'': a {\tt JaggedArray} class.
+  \item Users found {\tt JaggedArrays} useful despite the fact that it doesn't hide the columnar representation (this was a surprise to me).
+  \item \textcolor{darkblue}{Awkward-array} built the abstract type system to columnar representation in the other direction: bottom-up, from physical arrays to abstract types.
+  \item \textcolor{darkblue}{Awkward-array} is the first in this series to be widely used; I'm getting a lot of feedback from Coffea and \textcolor{darkblue}{uproot 3} users.
+\end{enumerate}
 \end{frame}
 
 \end{document}
